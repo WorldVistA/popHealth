@@ -29,11 +29,11 @@ module Api
     def show
       @qr = QME::QualityReport.find(params[:id])
 
-      if current_user.preferences.show_aggregate_result && !@qr.aggregate_result && !APP_CONFIG['use_opml_structure'] 
+      if current_user.preferences.show_aggregate_result && !@qr.aggregate_result && !APP_CONFIG['use_opml_structure']
         cv = @qr.measure.continuous_variable
-        aqr = QME::QualityReport.where(measure_id: @qr.measure_id, sub_id: @qr.sub_id, 'filters.providers' => [Provider.root._id.to_s], effective_date: @qr.effective_date).first  	           
+        aqr = QME::QualityReport.where(measure_id: @qr.measure_id, sub_id: @qr.sub_id, 'filters.providers' => [Provider.root._id.to_s], effective_date: @qr.effective_date).first
         if aqr.result
-          if cv 
+          if cv
             @qr.aggregate_result = aqr.result.OBSERV
           else
             @qr.aggregate_result = (aqr.result.DENOM > 0)? (100*((aqr.result.NUMER).to_f / (aqr.result.DENOM - aqr.result.DENEXCEP - aqr.result.DENEX).to_f)).round : 0
@@ -62,7 +62,7 @@ module Api
     def create
       options = {}
       options[:filters] = build_filter
-      
+
       authorize_providers
       end_date = params[:effective_date]
       start_date = params[:effective_start_date]
@@ -79,7 +79,7 @@ module Api
       options[:effective_date] = end_date
       options[:test_id] = rp._id
       options['prefilter'] = build_mr_prefilter if APP_CONFIG['use_map_reduce_prefilter']
-      
+
       qr = QME::QualityReport.find_or_create(params[:measure_id],
                                            params[:sub_id], options)
       if !qr.calculated?
@@ -144,7 +144,7 @@ module Api
       authorize! :read, qr
       # this returns a criteria object so we can filter it additionally as needed
       results = qr.patient_results
-      render json: paginate(patient_results_api_query_url(qr),results.where(build_patient_filter).order_by([:last.asc, :first.asc]))
+      render json: paginate(patient_results_api_query_url(qr),results.where(build_patient_filter).only('_id', 'value.medical_record_id', 'value.first', 'value.last', 'value.birthdate', 'value.gender', 'value.patient_id').order_by([:last.asc, :first.asc]))
     end
 
     def patients
