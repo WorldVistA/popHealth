@@ -42,6 +42,9 @@ defaults: &defaults
     good: 70.0
     medium: 50.0
     poor: 0.0
+
+  # QRDA CMS program NONE/CPCPLUS/MIPS_INDIV/MIPS_GROUP
+  qrda_cms_program: none
   
   # Specify the types of events that you would like to record in the log
   log_to_database:
@@ -77,6 +80,10 @@ defaults: &defaults
         - :root: authors_organization_root
           :extension: authors_organization_ext
         :name: ''
+    :information_recipient:
+      :identifier:
+        :root:
+        :extension: information_recipient_ext
     :custodian:
       :ids:
       - :root: custodian_root
