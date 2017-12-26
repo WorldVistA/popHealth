@@ -20,6 +20,8 @@ module Api
     param :effective_start_date, String, :desc => 'Time in seconds since the epoch for the end date of the reporting period',
           :required => false
     param :provider_id, String, :desc => 'The Provider ID for CATIII generation'
+    param :cms_program, String, :desc => 'CMS Program Name NONE/CPCPLUS/MIPS_INDIV/MIPS_GROUP',
+          :required => false
     description <<-CDESC
       This action will generate a QRDA Category III document. If measure_ids and effective_date are not provided,
       the values from the user's dashboard will be used.
@@ -28,6 +30,7 @@ module Api
     def cat3
       log_api_call LogAction::EXPORT, "QRDA Category 3 report"
       measure_ids = params[:measure_ids] ||current_user.preferences["selected_measure_ids"]
+      @cms_program = !params[:cms_program] == nil ? params[:cms_program].upcase : APP_CONFIG['qrda_cms_program'].upcase
 
       # C4-mods : should we flag them so they can be conditional?
       fname=''
@@ -48,7 +51,12 @@ module Api
         when /2015/ =~ bndl
           cat3ver='r1_1'
         when /201[67]/
-          cat3ver='r2_1'
+          case @cms_program
+            when /MIPS/
+              cat3ver='r2_1/mips'
+            else
+              cat3ver='r2_1'
+          end
         else
           cat3ver='r1'
       end
