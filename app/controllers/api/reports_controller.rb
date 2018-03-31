@@ -113,8 +113,9 @@ module Api
       file = File.new(filepath, 'w')
       measures=HealthDataStandards::CQM::Measure.where(:cms_id => params[:cmsid]).to_a
       patients=[]
-      PatientCache.where('value.measure_id' => measures[0]['hqmf_id'],
-                         'value.provider_performances.provider_id' => BSON::ObjectId(params[:provider_id])).each do |pc|
+      patient_cache = PatientCache.where('value.measure_id' => measures[0]['hqmf_id'])
+      patient_cache = patient_cache.where('value.provider_performances.provider_id' => BSON::ObjectId(params[:provider_id])) if params[:provider_id]
+      patient_cache.each do |pc|
         if !pc['value.manual_exclusion']
           p = Record.find(pc['value.patient_id'])
           authorize! :read, p
