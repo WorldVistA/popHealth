@@ -1,5 +1,5 @@
 require 'measures/loader.rb'
-require 'hds/measure.rb'
+require 'hds/cqm_measure.rb'
 module Api
   class MeasuresController < ApplicationController
     resource_description do
