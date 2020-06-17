@@ -1,0 +1,45 @@
+version: "3"
+services:
+  mongo:
+    image: mongo:3.4.23
+    restart: always
+    ports:
+      - 27017:27017
+
+  rabbitmq:
+    image: rabbitmq:3.7.14
+#   environment:
+#      RABBITMQ_DEFAULT_VHOST: /
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  ecqm:
+    build:
+      dockerfile: Dockerfile
+      context: ../js-ecqm-engine-docker
+    restart: always
+    depends_on:
+      - mongo
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      MONGODB_HOST: mongo
+
+  pophealthweb:
+    build:
+      dockerfile: Dockerfile
+      context: ../pophealthweb
+    depends_on:
+      - mongo
+      - rabbitmq
+      - ecqm
+    environment:
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+      NLM_USERNAME: username
+      NLM_PASSWORD: password
+      RABBITMQ_URL: 'amqp://rabbitmq'
+    ports:
+      - 8082:80
