@@ -1,0 +1,10 @@
+<VirtualHost *:80>
+   PassengerRuby /usr/local/bin/ruby
+   DocumentRoot /popHealth/public
+   TimeOut 1200
+   <Directory /popHealth/public>
+      AllowOverride all
+      Options -MultiViews
+      Require all granted
+   </Directory>
+</VirtualHost>

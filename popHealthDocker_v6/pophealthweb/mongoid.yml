@@ -1,0 +1,22 @@
+development:
+  clients:
+    default:
+      database: pophealth-development
+      hosts:
+        - <%= ENV['MONGODB_HOST'] %>:<%= ENV['MONGODB_PORT'] %>
+test:
+  clients:
+    default:
+      database: pophealth-test
+      hosts:
+        - <%= ENV['MONGODB_HOST'] %>:<%= ENV['MONGODB_PORT'] %>
+production:
+  clients:
+    default:
+      database: pophealth-production
+      hosts:
+        - <%= ENV['MONGODB_HOST'] %>:<%= ENV['MONGODB_PORT'] %>
+      # options:
+      #   user: <%= ENV['MONGODB_USER'] %>
+      #   password: <%= ENV['MONGODB_PASSWORD'] %>
+
